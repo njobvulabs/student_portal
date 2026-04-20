@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.code }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Course Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">{{ course.code }} - {{ course.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ course.description }}</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Instructor:</strong> {{ course.instructor.get_full_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Students:</strong> {{ course.students.count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Announcements</h5>
+                    {% if is_instructor %}
+                    <a href="{% url 'courses:create_announcement' %}?course={{ course.id }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>New Announcement
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if announcements %}
+                    <div class="list-group">
+                        {% for announcement in announcements %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ announcement.title }}</h6>
+                                <small>{{ announcement.created_at|date }}</small>
+                            </div>
+                            <p class="mb-1">{{ announcement.content }}</p>
+                            <small>Posted by: {{ announcement.instructor.get_full_name }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No announcements yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {% if user.is_student %}
+            <!-- Student Grades -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">My Grades</h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Assignment</th>
+                                    <th>Score</th>
+                                    <th>Max</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.assignment_name }}</td>
+                                    <td>{{ grade.score }}</td>
+                                    <td>{{ grade.max_score }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No grades available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if is_instructor %}
+            <!-- Enrolled Students -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Enrolled Students</h5>
+                </div>
+                <div class="card-body">
+                    {% if enrolled_students %}
+                    <div class="list-group">
+                        {% for student in enrolled_students %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ student.get_full_name }}</h6>
+                                    <small>ID: {{ student.student_id }}</small>
+                                </div>
+                                <a href="{% url 'add_grade' course.id student.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus me-2"></i>Add Grade
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No students enrolled yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

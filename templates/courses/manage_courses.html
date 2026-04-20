@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">{{ title }}</h1>
+                    <p class="text-muted mb-0">{{ description }}</p>
+                </div>
+                <a href="{% url 'courses:create_course' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Course
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Instructor</th>
+                                    <th>Students</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td>{{ course.code }}</td>
+                                    <td>{{ course.name }}</td>
+                                    <td>{{ course.instructor.get_full_name }}</td>
+                                    <td>{{ course.students.count }}</td>
+                                    <td>
+                                        <span class="badge {% if course.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ course.is_active|yesno:"Active,Inactive" }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'courses:edit_course' course.id %}" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'courses:delete_course' course.id %}" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <p class="text-muted mb-0">No courses found.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.table th {
+    border-top: none;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-group .btn:not(:last-child) {
+    margin-right: 0.25rem;
+}
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+}
+</style>
+{% endblock %} 

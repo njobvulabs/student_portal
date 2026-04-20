@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load course_filters %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-1">{{ title }}</h1>
+            <p class="text-muted mb-0">{{ description }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if enrollments %}
+            {% for enrollment in enrollments %}
+            <div class="col-12 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                {{ enrollment.course.code }} - {{ enrollment.course.name }}
+                            </h5>
+                            <div class="d-flex align-items-center">
+                                <span class="me-3">Average: 
+                                    <strong class="
+                                        {% if course_averages|get_item:enrollment.course.id >= 90 %}text-success
+                                        {% elif course_averages|get_item:enrollment.course.id >= 80 %}text-primary
+                                        {% elif course_averages|get_item:enrollment.course.id >= 70 %}text-warning
+                                        {% else %}text-danger{% endif %}
+                                    ">
+                                        {{ course_averages|get_item:enrollment.course.id|default:"N/A" }}%
+                                    </strong>
+                                </span>
+                                <a href="{% url 'courses:course_detail' enrollment.course.id %}" class="btn btn-outline-primary btn-sm">
+                                    View Course
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Assignment</th>
+                                        <th class="text-center">Score</th>
+                                        <th class="text-center">Max Score</th>
+                                        <th class="text-center">Percentage</th>
+                                        <th class="text-center">Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% with enrollment_grades=grades|filter_by_enrollment:enrollment %}
+                                        {% if enrollment_grades %}
+                                            {% for grade in enrollment_grades %}
+                                            <tr>
+                                                <td>{{ grade.assignment_name }}</td>
+                                                <td class="text-center">{{ grade.score }}</td>
+                                                <td class="text-center">{{ grade.max_score }}</td>
+                                                <td class="text-center">
+                                                    {% widthratio grade.score grade.max_score 100 %}%
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge {% widthratio grade.score grade.max_score 100 as percentage %}
+                                                        {% if percentage >= 90 %}bg-success
+                                                        {% elif percentage >= 80 %}bg-primary
+                                                        {% elif percentage >= 70 %}bg-warning
+                                                        {% else %}bg-danger{% endif %}
+                                                    ">
+                                                        {% if percentage >= 90 %}A
+                                                        {% elif percentage >= 80 %}B
+                                                        {% elif percentage >= 70 %}C
+                                                        {% elif percentage >= 60 %}D
+                                                        {% else %}F{% endif %}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4">
+                                                    No grades available for this course yet.
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endwith %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    You are not enrolled in any courses yet.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+}
+
+.table th {
+    border-top: none;
+    background-color: #f8f9fa;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 1em;
+}
+
+.btn-outline-primary {
+    border-radius: 20px;
+}
+</style>
+
+{% block extra_js %}
+<script>
+// Custom template filter implementation in JavaScript
+function getItem(dict, key) {
+    return dict[key] || 'N/A';
+}
+
+function filterByEnrollment(grades, enrollment) {
+    return grades.filter(grade => grade.enrollment.id === enrollment.id);
+}
+</script>
+{% endblock %}
+{% endblock %} 

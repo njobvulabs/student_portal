@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="display-4 mb-4">Frequently Asked Questions</h1>
+                    <p class="lead text-muted mb-5">{{ description }}</p>
+
+                    <div class="accordion" id="faqAccordion">
+                        <!-- Account Management -->
+                        <div class="faq-section mb-5">
+                            <h2 class="h4 mb-4">Account Management</h2>
+                            
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        How do I create an account?
+                                    </button>
+                                </h3>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Click the "Register" button in the navigation bar and fill out the registration form. Make sure to provide accurate information, especially if you're registering as a student.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        How can I reset my password?
+                                    </button>
+                                </h3>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Click the "Forgot Password" link on the login page. Enter your email address, and we'll send you instructions to reset your password.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Course Management -->
+                        <div class="faq-section mb-5">
+                            <h2 class="h4 mb-4">Course Management</h2>
+                            
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        How do I enroll in a course?
+                                    </button>
+                                </h3>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Browse available courses in the Courses section. Click on a course to view details, then click the "Enroll" button. Some courses may require instructor approval.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        How can I view my course materials?
+                                    </button>
+                                </h3>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        After enrolling in a course, you can access course materials from your dashboard or the course page. Materials may include lectures, assignments, and resources.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grades and Progress -->
+                        <div class="faq-section mb-5">
+                            <h2 class="h4 mb-4">Grades and Progress</h2>
+                            
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        Where can I view my grades?
+                                    </button>
+                                </h3>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Access your grades through the Grades section in your dashboard. You can view individual assignment grades and overall course grades.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                        How is my progress tracked?
+                                    </button>
+                                </h3>
+                                <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Your progress is tracked automatically as you complete assignments and assessments. View your progress bars and statistics in your dashboard.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Support -->
+                        <div class="faq-section">
+                            <h2 class="h4 mb-4">Technical Support</h2>
+                            
+                            <div class="accordion-item border-0 mb-3">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                                        What should I do if I encounter technical issues?
+                                    </button>
+                                </h3>
+                                <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Contact our support team through the Contact page or email support@studentportal.com. Include details about the issue and any error messages you see.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                                        Which browsers are supported?
+                                    </button>
+                                </h3>
+                                <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body text-muted">
+                                        Our platform works best with modern browsers like Chrome, Firefox, Safari, and Edge. Make sure to keep your browser updated for the best experience.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.accordion-button {
+    border-radius: 10px !important;
+    background-color: #f8f9fa;
+    padding: 1rem 1.25rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.accordion-item {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card {
+    border-radius: 20px;
+}
+
+.faq-section {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 2rem;
+}
+
+.faq-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+</style>
+{% endblock %} 

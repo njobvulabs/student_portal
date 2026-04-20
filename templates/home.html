@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to NJOBVU COLLEGE (Student Portal) - Your Academic Hub{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold mb-4">Welcome to NJOBVU COLLEGE (Student Portal)</h1>
+                <p class="lead mb-4">Access your courses, grades, and academic resources all in one place. Join our growing community of learners today!</p>
+                {% if not user.is_authenticated %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{% url 'login' %}" class="btn btn-light btn-lg px-4 me-md-2">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-4">Register</a>
+                </div>
+                {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg px-4">Go to Dashboard</a>
+                {% endif %}
+            </div>
+            <div class="col-md-6 d-none d-md-block">
+                <img src="{% static 'img/education.svg' %}" alt="Education illustration" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <h2 class="text-center mb-5">Why Choose NJOBVU COLLEGE (Student Portal)?</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="feature-icon bg-primary bg-gradient text-white mb-3">
+                        <i class="fas fa-graduation-cap fa-2x"></i>
+                    </div>
+                    <h3 class="card-title h5">Academic Excellence</h3>
+                    <p class="card-text">Track your academic progress, access course materials, and stay on top of your grades.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="feature-icon bg-success bg-gradient text-white mb-3">
+                        <i class="fas fa-comments fa-2x"></i>
+                    </div>
+                    <h3 class="card-title h5">Easy Communication</h3>
+                    <p class="card-text">Stay connected with instructors and receive important announcements instantly.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="feature-icon bg-info bg-gradient text-white mb-3">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                    <h3 class="card-title h5">Schedule Management</h3>
+                    <p class="card-text">Access your course schedule and important academic dates at any time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h2 class="display-4 fw-bold text-primary">500+</h2>
+                <p class="text-muted">Active Students</p>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h2 class="display-4 fw-bold text-success">50+</h2>
+                <p class="text-muted">Expert Instructors</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="display-4 fw-bold text-info">100+</h2>
+                <p class="text-muted">Available Courses</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action Section -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="mb-4">Ready to Get Started?</h2>
+            <p class="lead mb-4">Join our academic community today and take control of your educational journey.</p>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-5">Create Your Account</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS for the home page -->
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}

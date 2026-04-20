@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="display-4 mb-4">Privacy Policy</h1>
+                    <p class="lead text-muted mb-5">{{ description }}</p>
+
+                    <div class="privacy-section mb-5">
+                        <h2 class="h4 mb-4">Information We Collect</h2>
+                        <p>We collect information that you provide directly to us, including:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Name and contact information</li>
+                            <li>Student ID and academic details</li>
+                            <li>Course enrollment information</li>
+                            <li>Assignment submissions and grades</li>
+                            <li>Communication preferences</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section mb-5">
+                        <h2 class="h4 mb-4">How We Use Your Information</h2>
+                        <p>We use the information we collect to:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Provide and maintain the Student Portal services</li>
+                            <li>Process course enrollments and assignments</li>
+                            <li>Track academic progress and generate reports</li>
+                            <li>Communicate important updates and announcements</li>
+                            <li>Improve our services and user experience</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section mb-5">
+                        <h2 class="h4 mb-4">Information Sharing</h2>
+                        <p class="text-muted">We do not sell or share your personal information with third parties except as described in this policy. We may share your information with:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Course instructors and academic staff</li>
+                            <li>Administrative personnel</li>
+                            <li>Service providers who assist in operating the portal</li>
+                            <li>Legal authorities when required by law</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section mb-5">
+                        <h2 class="h4 mb-4">Data Security</h2>
+                        <p class="text-muted">We implement appropriate security measures to protect your personal information, including:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Encryption of data in transit and at rest</li>
+                            <li>Regular security audits and updates</li>
+                            <li>Access controls and authentication</li>
+                            <li>Secure data backup and recovery procedures</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section mb-5">
+                        <h2 class="h4 mb-4">Your Rights</h2>
+                        <p class="text-muted">You have the right to:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Access your personal information</li>
+                            <li>Correct inaccurate information</li>
+                            <li>Request deletion of your information</li>
+                            <li>Opt-out of certain data collection</li>
+                            <li>Receive a copy of your data</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2 class="h4 mb-4">Contact Us</h2>
+                        <p class="text-muted">If you have questions about this Privacy Policy or our practices, please contact us:</p>
+                        <ul class="text-muted mb-0">
+                            <li>Email: support@studentportal.com</li>
+                            <li>Phone: +265885829750</li>
+                            <li>Address: Chilobwe, Blantyre, Malawi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 20px;
+}
+
+.privacy-section {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 2rem;
+}
+
+.privacy-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.privacy-section ul {
+    padding-left: 1.25rem;
+}
+
+.privacy-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.privacy-section ul li:last-child {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %} 

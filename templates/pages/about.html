@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="display-4 mb-4">About Student Portal</h1>
+                    <p class="lead text-muted mb-4">{{ description }}</p>
+
+                    <div class="mb-5">
+                        <h2 class="h4 mb-4">Our Mission</h2>
+                        <p>At Student Portal, we're committed to revolutionizing the way students and educators interact with educational resources. Our platform provides a seamless, intuitive experience for managing academic life, from course enrollment to grade tracking.</p>
+                    </div>
+
+                    <div class="mb-5">
+                        <h2 class="h4 mb-4">What We Offer</h2>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="d-flex">
+                                    <div class="feature-icon bg-primary bg-gradient text-white me-3">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 mb-2">Course Management</h3>
+                                        <p class="text-muted mb-0">Easy access to course materials and schedules.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex">
+                                    <div class="feature-icon bg-success bg-gradient text-white me-3">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 mb-2">Grade Tracking</h3>
+                                        <p class="text-muted mb-0">Monitor your academic progress in real-time.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex">
+                                    <div class="feature-icon bg-info bg-gradient text-white me-3">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 mb-2">Communication Tools</h3>
+                                        <p class="text-muted mb-0">Stay connected with instructors and peers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex">
+                                    <div class="feature-icon bg-warning bg-gradient text-white me-3">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="h5 mb-2">Announcements</h3>
+                                        <p class="text-muted mb-0">Never miss important updates and deadlines.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h2 class="h4 mb-4">Our Team</h2>
+                        <p>We're a dedicated team of educators, developers, and designers working together to create the best possible learning experience for our users. Our diverse backgrounds and expertise allow us to understand and address the unique needs of both students and instructors.</p>
+                    </div>
+
+                    <div>
+                        <h2 class="h4 mb-4">Get Started</h2>
+                        <p class="mb-4">Ready to enhance your academic journey? Join our growing community of learners and educators today.</p>
+                        {% if not user.is_authenticated %}
+                        <div class="d-grid gap-2 d-sm-flex">
+                            <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4">Create Account</a>
+                            <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg px-4">Contact Us</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    border-radius: 20px;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Student Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'courses:announcements' %}">Announcements</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ announcement.title }}</li>
+                </ol>
+            </nav>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h2 mb-3">{{ announcement.title }}</h1>
+                    
+                    <div class="d-flex align-items-center text-muted mb-4">
+                        <div class="me-4">
+                            <i class="fas fa-user-tie me-2"></i>
+                            {{ announcement.instructor.get_full_name }}
+                        </div>
+                        <div class="me-4">
+                            <i class="fas fa-calendar me-2"></i>
+                            {{ announcement.created_at|date:"F j, Y" }}
+                        </div>
+                        <div>
+                            <i class="fas fa-book me-2"></i>
+                            <a href="{% url 'courses:course_detail' announcement.course.id %}" class="text-decoration-none">
+                                {{ announcement.course.code }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="announcement-content mb-4">
+                        {{ announcement.content|linebreaks }}
+                    </div>
+
+                    {% if announcement.expires_at %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock me-2"></i>
+                        This announcement will expire on {{ announcement.expires_at|date:"F j, Y" }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'courses:announcements' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Announcements
+                </a>
+                {% if user == announcement.instructor %}
+                <a href="{% url 'courses:edit_announcement' announcement.id %}" class="btn btn-primary ms-2">
+                    <i class="fas fa-edit me-2"></i>Edit Announcement
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+}
+
+.announcement-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+}
+
+.btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,119 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Student Portal Admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">Student Portal Administration</a>
+</h1>
+{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --danger-color: #dc3545;
+    }
+
+    /* Action Buttons */
+    .button {
+        display: inline-block;
+        padding: 4px 12px;
+        margin: 0 4px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .button:first-child {
+        background-color: var(--primary-color);
+        color: white !important;
+    }
+
+    .button:last-child {
+        background-color: var(--danger-color);
+        color: white !important;
+    }
+
+    .button:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }
+
+    /* Table Styles */
+    #changelist table thead th {
+        padding: 12px 8px;
+    }
+
+    #changelist table tbody td {
+        padding: 12px 8px;
+    }
+
+    /* List Filter Styles */
+    .module.filtered h2 {
+        background-color: var(--primary-color);
+    }
+
+    /* Pagination Styles */
+    .paginator a:link, .paginator a:visited {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .paginator a:hover {
+        opacity: 0.8;
+    }
+
+    /* Message/Notification Styles */
+    .messagelist li {
+        background-color: #000 !important;
+        color: #fff !important;
+        padding: 12px 20px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .messagelist li.success {
+        background-color: #000 !important;
+        border-color: #333;
+    }
+
+    .messagelist li.error {
+        background-color: #000 !important;
+        border-color: #333;
+    }
+
+    .messagelist li.warning {
+        background-color: #000 !important;
+        border-color: #333;
+    }
+
+    .messagelist li.info {
+        background-color: #000 !important;
+        border-color: #333;
+    }
+
+    /* Welcome Back Message Styles */
+    #user-tools {
+        background-color: #000 !important;
+        color: #fff !important;
+        padding: 8px 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+    }
+
+    #user-tools a {
+        color: #fff !important;
+        text-decoration: underline;
+    }
+
+    #user-tools a:hover {
+        color: #ccc !important;
+    }
+</style>
+{% endblock %} 
