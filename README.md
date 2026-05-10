@@ -1,4 +1,9 @@
 # NJOBVU COLLEGE Student Portal
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/d4ecfe76-4145-4976-a78c-c72b5410d29d" />
+
+## Live Demo
+
+Check out the live demo: [https://njobvu4linux.pythonanywhere.com/](https://njobvu4linux.pythonanywhere.com/)
 
 A comprehensive student portal system built with modern technologies to manage academic activities, course enrollments, grades, and communications between students, instructors, and administrators.
 
