@@ -20,7 +20,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-secret-ke
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 PRODUCTION = os.environ.get('PRODUCTION', 'False') == 'True'
 
-ALLOWED_HOSTS = ['njobvu4linux.pythonanywhere.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'njobvu4linux.pythonanywhere.com,localhost,127.0.0.1').split(',')
+if 'RENDER' in os.environ:
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_URL', '').replace('https://', ''))
+    ALLOWED_HOSTS.append('.onrender.com')
 
 # Security Settings — enabled only in production
 if PRODUCTION:
