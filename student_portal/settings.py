@@ -10,42 +10,38 @@ from django.contrib.messages import constants as messages
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables
-try:
-    from dotenv import load_dotenv
-    load_dotenv(BASE_DIR / '.env')
-except ImportError:
-    pass
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-PRODUCTION = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+PRODUCTION = os.environ.get('PRODUCTION', 'False') == 'True'
 
 ALLOWED_HOSTS = ['njobvu4linux.pythonanywhere.com', 'localhost', '127.0.0.1']
 
-# Security Settings
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_BROWSER_XSS_FILTER = False
-SECURE_CONTENT_TYPE_NOSNIFF = False
-SECURE_HSTS_SECONDS = 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
-
-# Only enable security settings in production
-if not DEBUG and os.environ.get('PRODUCTION', 'False') == 'True':
+# Security Settings — enabled only in production
+if PRODUCTION:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_BROWSER_XSS_FILTER = False
+    SECURE_CONTENT_TYPE_NOSNIFF = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
 
 # Application definition
 INSTALLED_APPS = [
@@ -72,7 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if not DEBUG and os.environ.get('PRODUCTION', 'False') == 'True':
+if PRODUCTION:
     MIDDLEWARE.insert(0, 'django.middleware.security.SecurityMiddleware')
 
 ROOT_URLCONF = 'student_portal.urls'
@@ -97,7 +93,7 @@ WSGI_APPLICATION = 'student_portal.wsgi.application'
 
 # Database
 # Use PostgreSQL in production, SQLite in development
-if not DEBUG and os.environ.get('DB_NAME'):
+if PRODUCTION and os.environ.get('DB_NAME'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

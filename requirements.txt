@@ -4,4 +4,5 @@ psycopg2-binary==2.9.10
 django-crispy-forms==2.1
 crispy-bootstrap5==0.7
 whitenoise==6.6.0
-gunicorn==21.2.0 
+gunicorn==21.2.0
+Pillow==11.1.0

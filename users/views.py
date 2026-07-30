@@ -3,13 +3,14 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Avg, Q
+from django.db.models import Avg
+from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import os
 from .models import User
 from courses.models import Course, Enrollment, Announcement, Grade
-from .forms import UserRegistrationForm, UserUpdateForm, UserProfileForm
+from .forms import UserRegistrationForm, UserProfileForm
 
 # Create your views here.
 
@@ -96,15 +97,15 @@ def dashboard(request):
         context['enrolled_courses'] = enrollments
         
         # Calculate average grade across all assignments
-        grades = Grade.objects.filter(enrollment__in=enrollments)
+        grades = Grade.objects.filter(enrollment__in=enrollments).select_related('assignment')
         if grades.exists():
-            grade_percentages = grades.annotate(
-                percentage=models.ExpressionWrapper(
-                    models.F('score') * 100.0 / models.F('max_score'),
-                    output_field=models.FloatField()
-                )
-            )
-            context['average_grade'] = grade_percentages.aggregate(Avg('percentage'))['percentage__avg']
+            total_pct = 0
+            count = 0
+            for grade in grades:
+                if grade.assignment and grade.assignment.max_score > 0:
+                    total_pct += float(grade.score) / float(grade.assignment.max_score) * 100
+                    count += 1
+            context['average_grade'] = round(total_pct / count, 1) if count > 0 else None
         else:
             context['average_grade'] = None
             
@@ -133,23 +134,46 @@ def dashboard(request):
 @login_required
 def profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('profile')
-    else:
-        form = UserProfileForm(instance=request.user)
-    
+        action = request.POST.get('action', 'personal')
+
+        if action == 'password':
+            current = request.POST.get('current_password')
+            new_pass = request.POST.get('new_password')
+            confirm = request.POST.get('confirm_password')
+            if request.user.check_password(current) and new_pass and new_pass == confirm:
+                request.user.set_password(new_pass)
+                request.user.save()
+                messages.success(request, 'Password changed. Please log in again.')
+                return redirect('login')
+            else:
+                messages.error(request, 'Password change failed. Check your input.')
+
+        elif action == 'preferences':
+            request.user.language = request.POST.get('language', 'en')
+            request.user.timezone = request.POST.get('timezone', 'UTC')
+            request.user.email_notifications = request.POST.get('email_notifications') == 'on'
+            request.user.save()
+            messages.success(request, 'Preferences saved!')
+
+        else:
+            form = UserProfileForm(request.POST, instance=request.user)
+            if form.is_valid():
+                form.save()
+                request.user.bio = request.POST.get('bio', '')
+                request.user.save()
+                messages.success(request, 'Profile updated successfully!')
+            else:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
+                return render(request, 'users/profile.html', {'form': form})
+
+        return redirect('profile')
+
+    form = UserProfileForm(instance=request.user)
     return render(request, 'users/profile.html', {'form': form})
 
-def password_reset(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        # Add password reset logic here
-        messages.info(request, 'If an account exists with this email, you will receive password reset instructions.')
-        return redirect('login')
-    return render(request, 'users/password_reset.html')
+
 
 @user_passes_test(lambda u: u.is_admin())
 def user_management(request):

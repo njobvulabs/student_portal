@@ -8,8 +8,15 @@
         <div class="col-md-8">
             <!-- Course Information -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">{{ course.code }} - {{ course.name }}</h4>
+                    {% if is_instructor %}
+                    <div class="btn-group">
+                        <a href="{% url 'courses:assignment_create' course.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Assignment
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <p class="card-text">{{ course.description }}</p>
@@ -21,6 +28,54 @@
                             <p><strong>Total Students:</strong> {{ course.students.count }}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Assignments -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Assignments</h5>
+                </div>
+                <div class="card-body">
+                    {% with assignments=course.assignments.all %}
+                    {% if assignments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Due Date</th>
+                                    <th>Max Score</th>
+                                    <th>Weight</th>
+                                    {% if is_instructor %}<th>Actions</th>{% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in assignments %}
+                                <tr>
+                                    <td>{{ assignment.title }}</td>
+                                    <td>{{ assignment.due_date|date:"M d, Y H:i" }}</td>
+                                    <td>{{ assignment.max_score }}</td>
+                                    <td>{{ assignment.weight }}</td>
+                                    {% if is_instructor %}
+                                    <td>
+                                        <a href="{% url 'courses:assignment_edit' course.id assignment.id %}" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'courses:assignment_delete' course.id assignment.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No assignments yet.</p>
+                    {% endif %}
+                    {% endwith %}
                 </div>
             </div>
 
@@ -56,7 +111,7 @@
         </div>
 
         <div class="col-md-4">
-            {% if user.is_student %}
+            {% if user.role == 'student' %}
             <!-- Student Grades -->
             <div class="card mb-4">
                 <div class="card-header">
@@ -107,7 +162,7 @@
                                     <h6 class="mb-1">{{ student.get_full_name }}</h6>
                                     <small>ID: {{ student.student_id }}</small>
                                 </div>
-                                <a href="{% url 'add_grade' course.id student.id %}" class="btn btn-primary btn-sm">
+                                <a href="{% url 'courses:add_grade' course.id student.id %}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-plus me-2"></i>Add Grade
                                 </a>
                             </div>

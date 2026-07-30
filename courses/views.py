@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.db.models import Avg, Q
-from .models import Course, Enrollment, Grade, Announcement
-from .forms import CourseForm, GradeForm, AnnouncementForm
+from django.db.models import Avg
+from django.db import models
+from .models import Course, Enrollment, Grade, Announcement, Assignment
+from .forms import CourseForm, GradeForm, AnnouncementForm, AssignmentForm
 from users.models import User
 
 @login_required
@@ -31,18 +32,23 @@ def course_detail(request, course_id):
     
     if request.user.role == 'student':
         enrollment = get_object_or_404(Enrollment, student=request.user, course=course)
-        grades = Grade.objects.filter(enrollment=enrollment)
+        grades = Grade.objects.filter(enrollment=enrollment).select_related('assignment')
         context = {
             'course': course,
             'enrollment': enrollment,
             'grades': grades,
-            'announcements': Announcement.objects.filter(course=course, is_active=True)
+            'announcements': Announcement.objects.filter(course=course, is_active=True),
+            'is_instructor': False,
+            'enrolled_students': [],
         }
     else:
+        enrolled_students = User.objects.filter(enrollment__course=course, enrollment__is_active=True)
         context = {
             'course': course,
             'students': course.students.filter(enrollment__is_active=True),
-            'announcements': Announcement.objects.filter(course=course, is_active=True)
+            'announcements': Announcement.objects.filter(course=course, is_active=True),
+            'is_instructor': request.user.role == 'instructor',
+            'enrolled_students': enrolled_students,
         }
     
     context.update({
@@ -72,7 +78,7 @@ def add_grade(request, course_id, student_id):
     enrollment = get_object_or_404(Enrollment, course=course, student=student)
     
     if request.method == 'POST':
-        form = GradeForm(request.POST)
+        form = GradeForm(request.POST, enrollment=enrollment)
         if form.is_valid():
             grade = form.save(commit=False)
             grade.enrollment = enrollment
@@ -80,7 +86,7 @@ def add_grade(request, course_id, student_id):
             messages.success(request, 'Grade has been added successfully.')
             return redirect('course_detail', course_id=course_id)
     else:
-        form = GradeForm()
+        form = GradeForm(enrollment=enrollment)
     
     return render(request, 'courses/grade_form.html', {
         'form': form,
@@ -155,17 +161,20 @@ def grade_list(request):
         return redirect('dashboard')
     
     enrollments = Enrollment.objects.filter(student=request.user, is_active=True)
-    grades = Grade.objects.filter(enrollment__in=enrollments)
+    grades = Grade.objects.filter(enrollment__in=enrollments).select_related('assignment')
     
     # Calculate course averages
     course_averages = {}
     for enrollment in enrollments:
-        course_grades = grades.filter(enrollment=enrollment)
-        if course_grades.exists():
-            avg = course_grades.annotate(
-                percentage=(models.F('score') * 100.0 / models.F('max_score'))
-            ).aggregate(avg=Avg('percentage'))['avg']
-            course_averages[enrollment.course.id] = round(avg, 1) if avg else None
+        course_grades = [g for g in grades if g.enrollment_id == enrollment.id]
+        if course_grades:
+            total_pct = 0
+            count = 0
+            for g in course_grades:
+                if g.assignment and g.assignment.max_score > 0:
+                    total_pct += float(g.score) / float(g.assignment.max_score) * 100
+                    count += 1
+            course_averages[enrollment.course.id] = round(total_pct / count, 1) if count > 0 else None
     
     return render(request, 'courses/grade_list.html', {
         'enrollments': enrollments,
@@ -219,7 +228,7 @@ def available_courses(request):
     })
 
 @login_required
-@user_passes_test(lambda u: u.is_admin)
+@user_passes_test(lambda u: u.is_admin())
 def manage_courses(request):
     courses = Course.objects.all().order_by('-created_at')
     return render(request, 'courses/manage_courses.html', {
@@ -229,7 +238,7 @@ def manage_courses(request):
     })
 
 @login_required
-@user_passes_test(lambda u: u.is_admin)
+@user_passes_test(lambda u: u.is_admin())
 def edit_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     if request.method == 'POST':
@@ -250,7 +259,7 @@ def edit_course(request, course_id):
     })
 
 @login_required
-@user_passes_test(lambda u: u.is_admin)
+@user_passes_test(lambda u: u.is_admin())
 def delete_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     if request.method == 'POST':
@@ -262,4 +271,55 @@ def delete_course(request, course_id):
         'course': course,
         'title': f'Delete Course: {course.code}',
         'description': 'Are you sure you want to delete this course?'
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.is_instructor())
+def assignment_create(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST)
+        if form.is_valid():
+            assignment = form.save(commit=False)
+            assignment.course = course
+            assignment.save()
+            messages.success(request, f'Assignment "{assignment.title}" created.')
+            return redirect('courses:course_detail', course_id=course.id)
+    else:
+        form = AssignmentForm()
+    return render(request, 'courses/assignment_form.html', {
+        'form': form, 'course': course, 'action': 'Create'
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.is_instructor())
+def assignment_edit(request, course_id, assignment_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    assignment = get_object_or_404(Assignment, id=assignment_id, course=course)
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, instance=assignment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Assignment "{assignment.title}" updated.')
+            return redirect('courses:course_detail', course_id=course.id)
+    else:
+        form = AssignmentForm(instance=assignment)
+    return render(request, 'courses/assignment_form.html', {
+        'form': form, 'course': course, 'assignment': assignment, 'action': 'Update'
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.is_instructor())
+def assignment_delete(request, course_id, assignment_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    assignment = get_object_or_404(Assignment, id=assignment_id, course=course)
+    if request.method == 'POST':
+        assignment.delete()
+        messages.success(request, f'Assignment "{assignment.title}" deleted.')
+        return redirect('courses:course_detail', course_id=course.id)
+    return render(request, 'courses/assignment_confirm_delete.html', {
+        'assignment': assignment, 'course': course
     })

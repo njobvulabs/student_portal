@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 class Course(models.Model):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=200)
@@ -20,6 +21,7 @@ class Course(models.Model):
     def get_total_assignments(self):
         return self.assignments.count()
 
+
 class Assignment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments')
     title = models.CharField(max_length=200)
@@ -38,6 +40,7 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.course.code} - {self.title}"
 
+
 class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -52,27 +55,36 @@ class Enrollment(models.Model):
         grades = self.grade_set.all()
         if not grades.exists():
             return 0
-        
-        total_score = sum(grade.score for grade in grades)
-        total_max = sum(grade.max_score for grade in grades)
-        
+
+        total_score = sum(float(grade.score) for grade in grades)
+        total_max = sum(float(grade.assignment.max_score) for grade in grades if grade.assignment)
+
         if total_max == 0:
             return 0
-            
+
         return round((total_score / total_max) * 100, 1)
+
 
 class Grade(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, null=True)
     score = models.DecimalField(max_digits=5, decimal_places=2)
     submitted_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         db_table = 'grades'
         unique_together = ['enrollment', 'assignment']
 
     def __str__(self):
-        return f"{self.enrollment.student.get_full_name()} - {self.assignment.title if self.assignment else 'No Assignment'}"
+        return f"{self.enrollment.student.get_full_name()} - {self.assignment_name}"
+
+    @property
+    def max_score(self):
+        return self.assignment.max_score if self.assignment else 0
+
+    @property
+    def assignment_name(self):
+        return self.assignment.title if self.assignment else 'No Assignment'
 
 class Announcement(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

@@ -36,9 +36,11 @@ class UserRegistrationForm(UserCreationForm):
         self.fields['program_of_study'].widget.attrs.update({'placeholder': 'Enter your program of study'})
         self.fields['year_of_study'].widget.attrs.update({'placeholder': 'Enter your year of study'})
 
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
+    def clean_student_id(self):
+        student_id = self.cleaned_data.get('student_id')
+        if student_id and User.objects.filter(student_id=student_id).exists():
+            raise forms.ValidationError('This student ID is already registered.')
+        return student_id
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -72,14 +74,3 @@ class UserProfileForm(forms.ModelForm):
             self.fields['program_of_study'].required = False
             self.fields['year_of_study'].required = False
 
-class UserUpdateForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['email', 'first_name', 'last_name', 'phone_number']
-        if User.role == User.STUDENT:
-            fields.extend(['program_of_study', 'year_of_study'])
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs.update({'class': 'form-control'})

@@ -7,6 +7,10 @@ Check out the live demo: [https://njobvu4linux.pythonanywhere.com/](https://njob
 
 A comprehensive student portal system built with modern technologies to manage academic activities, course enrollments, grades, and communications between students, instructors, and administrators.
 
+## Live Demo
+
+Check out the live demo: [https://njobvu4linux.pythonanywhere.com/](https://njobvu4linux.pythonanywhere.com/)
+
 ## Technologies Used
 
 - **Backend Framework:** Django 4.2+
