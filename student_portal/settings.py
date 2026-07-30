@@ -13,16 +13,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
+def _env(key, fallback=''):
+    return os.environ.get(key) or os.environ.get(key.lower()) or fallback
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', os.environ.get('django_secret_key', 'django-insecure-your-secret-key-here'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-PRODUCTION = os.environ.get('PRODUCTION', 'False') == 'True'
+DEBUG = (os.environ.get('DEBUG', os.environ.get('debug', 'False')) == 'True')
+PRODUCTION = (os.environ.get('PRODUCTION', os.environ.get('production', 'False')) == 'True')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'njobvu4linux.pythonanywhere.com,localhost,127.0.0.1').split(',')
-if 'RENDER' in os.environ:
-    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_URL', '').replace('https://', ''))
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', os.environ.get('allowed_hosts', 'njobvu4linux.pythonanywhere.com,localhost,127.0.0.1')).split(',')
+if os.environ.get('RENDER') or os.environ.get('render'):
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_URL', os.environ.get('render_external_url', '')).replace('https://', ''))
     ALLOWED_HOSTS.append('.onrender.com')
 
 # Security Settings — enabled only in production
@@ -96,15 +98,16 @@ WSGI_APPLICATION = 'student_portal.wsgi.application'
 
 # Database
 # Use PostgreSQL in production, SQLite in development
-if PRODUCTION and os.environ.get('DB_NAME'):
+_db_name = os.environ.get('DB_NAME') or os.environ.get('db_name')
+if PRODUCTION and _db_name:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
+            'NAME': _db_name,
+            'USER': _env('DB_USER'),
+            'PASSWORD': _env('DB_PASSWORD'),
+            'HOST': _env('DB_HOST', 'localhost'),
+            'PORT': _env('DB_PORT', '5432'),
         }
     }
 else:
@@ -117,11 +120,11 @@ else:
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' if not DEBUG else 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST = _env('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(_env('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = _env('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = _env('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = _env('EMAIL_HOST_PASSWORD', '')
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'

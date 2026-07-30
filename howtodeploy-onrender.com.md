@@ -10,18 +10,18 @@
    - **Start Command**: `gunicorn student_portal.wsgi`
    - **Plan**: Free or Starter
 
-3. **Set environment variables** in Render dashboard:
+3. **Set environment variables** in Render dashboard (lowercase only — Render requires it):
    ```
-   DJANGO_SECRET_KEY=<generate a long random key>
-   DEBUG=False
-   PRODUCTION=True
-   PYTHON_VERSION=3.14.6
-   DB_NAME=<Render PostgreSQL database>
-   DB_USER=<Render PostgreSQL user>
-   DB_PASSWORD=<Render PostgreSQL password>
-   DB_HOST=<Render PostgreSQL hostname>
-   DB_PORT=5432
+   django_secret_key=<generate a long random key>
+   debug=False
+   production=True
+   db_name=<Render PostgreSQL database>
+   db_user=<Render PostgreSQL user>
+   db_password=<Render PostgreSQL password>
+   db_host=<Render PostgreSQL hostname>
+   db_port=5432
    ```
+   Uppercase names like `DB_NAME` also work (the code checks both).
 
 4. **Create a PostgreSQL database** on Render and copy the connection details into the env vars above.
 
