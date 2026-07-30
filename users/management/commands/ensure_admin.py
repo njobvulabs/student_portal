@@ -5,7 +5,7 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Creates a default admin user if none exists'
+    help = 'Ensures a default admin user exists (idempotent)'
 
     def add_arguments(self, parser):
         parser.add_argument('--username', default='admin')
@@ -13,16 +13,27 @@ class Command(BaseCommand):
         parser.add_argument('--email', default='admin@njovu.edu')
 
     def handle(self, *args, **options):
-        if User.objects.filter(role=User.ADMIN).exists():
-            self.stdout.write(self.style.WARNING('Admin user already exists, skipping'))
+        opts = {k: options[k] for k in ['username', 'password', 'email']}
+
+        user = User.objects.filter(username=opts['username']).first()
+        if user:
+            if user.role != User.ADMIN or not user.is_superuser:
+                user.role = User.ADMIN
+                user.is_staff = True
+                user.is_superuser = True
+                user.set_password(opts['password'])
+                user.save(update_fields=['role', 'is_staff', 'is_superuser', 'password'])
+                self.stdout.write(self.style.SUCCESS(f'Existing user "{opts["username"]}" upgraded to admin'))
+            else:
+                self.stdout.write(self.style.WARNING(f'Admin "{opts["username"]}" already exists, skipping'))
             return
 
         User.objects.create_superuser(
-            username=options['username'],
-            password=options['password'],
-            email=options['email'],
+            username=opts['username'],
+            password=opts['password'],
+            email=opts['email'],
             role=User.ADMIN,
         )
         self.stdout.write(self.style.SUCCESS(
-            f'Default admin created: {options["username"]} / {options["password"]}'
+            f'Default admin created: {opts["username"]} / {opts["password"]}'
         ))
